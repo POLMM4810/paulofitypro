@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Paulo Fit">
+<meta name="theme-color" content="#0f0f0f">
+<title>Paulo Fit</title>
+
+<!-- Icono PWA inline como SVG en base64 -->
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjQwIiBmaWxsPSIjMGYwZjBmIi8+PHRleHQgeD0iNTAlIiB5PSI1NSUiIGZvbnQtZmFtaWx5PSJBcmlhbCBCbGFjayxzYW5zLXNlcmlmIiBmb250LXNpemU9IjcyIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjZThiZjQ3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIj5QRjwvdGV4dD48dGV4dCB4PSI1MCUiIHk9Ijc4JSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiM4ODg4ODgiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkZJVE5FU1M8L3RleHQ+PC9zdmc+">
+
+
+<style>
+  :root{--bg:#0f0f0f;--card:#1a1a1a;--accent:#e8ff47;--accent2:#ff6b35;--text:#f0f0f0;--muted:#888;--border:#2a2a2a;--green:#4ade80;--blue:#60a5fa;--orange:#fb923c}
+  @font-face{font-family:'Bebas';src:local('Bebas Neue'),local('Impact'),local('Arial Narrow');font-weight:900}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;min-height:100vh;padding:env(safe-area-inset-top,20px) 16px 60px;padding-top:max(env(safe-area-inset-top),20px)}
+  header{text-align:center;margin-bottom:24px;padding-top:4px}
+  header h1{font-family:'Bebas',Impact,'Arial Narrow',sans-serif;font-size:clamp(3rem,11vw,5.5rem);letter-spacing:4px;background:linear-gradient(135deg,#e8ff47,#b8cc20);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+  header p{color:var(--muted);font-size:.78rem;margin-top:5px;letter-spacing:2px;text-transform:uppercase}
+  .badge{display:inline-block;background:rgba(232,255,71,.12);border:1px solid rgba(232,255,71,.25);color:var(--accent);font-size:.65rem;padding:3px 10px;border-radius:20px;letter-spacing:1px;margin-top:6px}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:22px}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 8px;text-align:center}
+  .stat-val{font-family:'Bebas',Impact,'Arial Narrow',sans-serif;font-size:1.9rem;color:var(--accent);line-height:1}
+  .stat-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:3px}
+  .section{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:18px}
+  .section-title{font-family:'Bebas Neue',sans-serif;font-size:1.35rem;letter-spacing:2px;color:var(--accent);margin-bottom:13px;display:flex;align-items:center;gap:7px}
+  .row{display:flex;gap:8px;margin-bottom:11px}
+  input[type=number],input[type=text]{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:11px;color:var(--text);padding:12px 13px;font-family:'DM Sans',sans-serif;font-size:1rem;-webkit-appearance:none;appearance:none}
+  input:focus{outline:none;border-color:var(--accent)}
+  .btn{background:linear-gradient(135deg,#e8ff47,#d4eb30);color:#000;border:none;border-radius:11px;padding:12px 17px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;white-space:nowrap;box-shadow:0 4px 15px rgba(232,255,71,.2)}
+  .btn:active{transform:scale(.97);opacity:.9}
+  .btn-sm{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif}
+  .history{display:flex;flex-direction:column;gap:7px;max-height:210px;overflow-y:auto}
+  .entry{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border-radius:9px;padding:10px 13px;font-size:.86rem}
+  .entry .fecha{color:var(--muted);font-size:.75rem}
+  .entry .valor{font-weight:600;color:var(--accent)}
+  .diff-pos{color:var(--green);font-size:.75rem}
+  .diff-neg{color:var(--accent2);font-size:.75rem}
+  .dias-nav{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:3px;scrollbar-width:none}
+  .dias-nav::-webkit-scrollbar{display:none}
+  .dia-btn{flex-shrink:0;background:var(--card);border:1px solid var(--border);border-radius:13px;color:var(--muted);padding:11px 17px;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;cursor:pointer;transition:all .2s;line-height:1.4}
+  .dia-btn.active{background:linear-gradient(135deg,#e8ff47,#d4eb30);color:#000;border-color:transparent;box-shadow:0 4px 15px rgba(232,255,71,.25)}
+  .progreso-wrap{margin-bottom:16px}
+  .progreso-label{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-bottom:6px}
+  .progreso-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+  .progreso-fill{height:100%;background:linear-gradient(90deg,#e8ff47,#b8cc20);border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+  .ej-grid{display:flex;flex-direction:column;gap:11px}
+  .ej-card{background:var(--card);border:1px solid var(--border);border-radius:15px;overflow:hidden;transition:border-color .3s,opacity .3s}
+  .ej-card.done{border-color:rgba(74,222,128,.5);opacity:.65}
+  .ej-header{display:flex;align-items:center;gap:11px;padding:13px;cursor:pointer}
+  .ej-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+  .ic-cadera{background:rgba(251,146,60,.15)}
+  .ic-pecho{background:rgba(96,165,250,.15)}
+  .ic-core{background:rgba(232,255,71,.12)}
+  .ic-espalda{background:rgba(74,222,128,.12)}
+  .ej-info{flex:1;min-width:0}
+  .ej-nombre{font-weight:600;font-size:.92rem;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ej-meta{display:flex;gap:6px;flex-wrap:wrap}
+  .tag{font-size:.67rem;padding:3px 8px;border-radius:20px;font-weight:500}
+  .t1{background:rgba(232,255,71,.12);color:var(--accent)}
+  .t2{background:rgba(96,165,250,.12);color:var(--blue)}
+  .t3{background:rgba(251,146,60,.12);color:var(--orange)}
+  .check-btn{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;transition:all .25s}
+  .check-btn.done{background:var(--green);border-color:var(--green);box-shadow:0 0 12px rgba(74,222,128,.4)}
+  .ej-detail{display:none;padding:0 13px 13px;border-top:1px solid var(--border)}
+  .ej-detail.open{display:block}
+  .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}
+  .di{background:var(--bg);border-radius:10px;padding:11px}
+  .di h4{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+  .di p{font-size:.82rem;line-height:1.55}
+  .full{grid-column:1/-1}
+  .err-box{background:rgba(255,107,53,.07);border:1px solid rgba(255,107,53,.2);border-radius:10px;padding:11px;font-size:.82rem;line-height:1.55;color:#ffaa88}
+  .hip-box{background:rgba(232,255,71,.05);border:1px solid rgba(232,255,71,.12);border-radius:10px;padding:11px;font-size:.82rem;color:var(--accent)}
+  .video-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(255,0,0,.1);border:1px solid rgba(255,0,0,.22);color:#ff7070;border-radius:8px;padding:8px 13px;font-size:.8rem;font-weight:600;text-decoration:none;margin-top:10px;font-family:'DM Sans',sans-serif}
+  .semana-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
+  .dia-s{aspect-ratio:1;border-radius:9px;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.6rem;color:var(--muted);gap:3px}
+  .dia-s.hecho{background:rgba(232,255,71,.13);color:var(--accent)}
+  .dia-s.hoy{border:1.5px solid var(--accent)}
+  .reset-btn{margin-top:13px;width:100%;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:11px;padding:10px;font-family:'DM Sans',sans-serif;font-size:.78rem;cursor:pointer}
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(10px);background:linear-gradient(135deg,#e8ff47,#d4eb30);color:#000;padding:11px 24px;border-radius:30px;font-weight:700;font-size:.86rem;opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap;box-shadow:0 6px 24px rgba(232,255,71,.35)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .empty-state{color:var(--muted);font-size:.83rem;text-align:center;padding:18px}
+  .install-banner{background:linear-gradient(135deg,rgba(232,255,71,.08),rgba(232,255,71,.03));border:1px solid rgba(232,255,71,.2);border-radius:14px;padding:14px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px}
+  .install-banner .ico{font-size:1.8rem;flex-shrink:0}
+  .install-banner h3{font-size:.88rem;font-weight:600;color:var(--accent);margin-bottom:3px}
+  .install-banner p{font-size:.75rem;color:var(--muted);line-height:1.5}
+  .step{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(232,255,71,.15);color:var(--accent);font-size:.7rem;font-weight:700;margin-right:4px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>PAULO FIT</h1>
+  <p>Plan 12 semanas · Cadera · Fuerza · Bici</p>
+  <div class="badge">⚡ DATOS GUARDADOS LOCALMENTE</div>
+</header>
+
+<!-- BANNER INSTALACIÓN -->
+<div class="install-banner" id="installBanner">
+  <div class="ico">📲</div>
+  <div>
+    <h3>Instalar en pantalla de inicio</h3>
+    <p><span class="step">1</span>Pulsa <strong>compartir</strong> (↑) en Safari &nbsp;·&nbsp; <span class="step">2</span>Toca <strong>"Añadir a pantalla"</strong> &nbsp;·&nbsp; <span class="step">3</span>Confirma</p>
+  </div>
+  <button class="btn-sm" onclick="document.getElementById('installBanner').style.display='none'" style="flex-shrink:0">✕</button>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><div class="stat-val" id="statPeso">—</div><div class="stat-label">Peso kg</div></div>
+  <div class="stat"><div class="stat-val" id="statSemana">1</div><div class="stat-label">Semana</div></div>
+  <div class="stat"><div class="stat-val" id="statSesiones">0</div><div class="stat-label">Sesiones</div></div>
+  <div class="stat"><div class="stat-val" id="statDiff">—</div><div class="stat-label">Cambio kg</div></div>
+</div>
+
+<!-- PESO -->
+<div class="section">
+  <div class="section-title">⚖️ Peso</div>
+  <div class="row">
+    <input type="number" id="pesoInput" placeholder="Ej: 79.5" step="0.1" min="40" max="180" inputmode="decimal">
+    <button class="btn" onclick="registrarPeso()">Guardar</button>
+  </div>
+  <div class="history" id="pesoHistory"><div class="empty-state">Pésate en ayunas cada lunes.</div></div>
+</div>
+
+<!-- SPINNING -->
+<div class="section">
+  <div class="section-title">🚴 Spinning</div>
+  <div class="row">
+    <input type="number" id="spinMin" placeholder="Minutos" min="5" max="120" style="max-width:110px" inputmode="numeric">
+    <input type="text" id="spinNota" placeholder="Nota (clase, nivel...)">
+    <button class="btn" onclick="registrarSpin()">Guardar</button>
+  </div>
+  <div class="history" id="spinHistory"><div class="empty-state">Sin sesiones aún.</div></div>
+</div>
+
+<!-- DÍAS -->
+<div class="dias-nav">
+  <button class="dia-btn active" onclick="setDia(0,this)">DÍA A<br><small style="font-family:'DM Sans';font-size:.65rem;font-weight:400">Cadera+Core</small></button>
+  <button class="dia-btn" onclick="setDia(1,this)">DÍA B<br><small style="font-family:'DM Sans';font-size:.65rem;font-weight:400">Pecho+Espalda</small></button>
+  <button class="dia-btn" onclick="setDia(2,this)">DÍA D<br><small style="font-family:'DM Sans';font-size:.65rem;font-weight:400">Bici+Postura</small></button>
+</div>
+
+<div class="progreso-wrap">
+  <div class="progreso-label"><span>Progreso sesión</span><span id="progresoTxt">0 / 0</span></div>
+  <div class="progreso-bar"><div class="progreso-fill" id="progresoFill" style="width:0%"></div></div>
+</div>
+
+<div class="ej-grid" id="ejContainer"></div>
+
+<!-- SEMANA -->
+<div class="section" style="margin-top:18px">
+  <div class="section-title">📅 Esta Semana</div>
+  <div class="semana-grid" id="semanaGrid"></div>
+  <button class="reset-btn" onclick="resetCompletados()">Limpiar marcas de sesión</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DIAS=[
+  {nombre:"DÍA A — Cadera + Core",ejercicios:[
+    {nombre:"Puente de Glúteo",icon:"🦵",ic:"ic-cadera",series:3,reps:"15 reps",peso:"Sin peso",musculo:"Glúteo mayor + Isquios",ejec:"Tumbado boca arriba, pies apoyados. Empuja el suelo y sube la cadera hasta línea recta hombro-cadera-rodilla. Aprieta glúteo 1 seg arriba.",resp:"Inhala abajo, exhala al subir.",err:"❌ No arquees la lumbar. ❌ No subas demasiado. ❌ Rodillas no deben moverse.",hip:"⭐ Ejercicio prioritario para tu cadera",video:"https://www.youtube.com/watch?v=oDXM-a-gBt8"},
+    {nombre:"Abducción Lateral Tumbado",icon:"🦴",ic:"ic-cadera",series:3,reps:"20 reps/lado",peso:"Sin peso",musculo:"Glúteo medio",ejec:"Tumbado de lado, pierna de arriba recta. Sube hasta 45° con pie en flex. Baja lento.",resp:"Exhala al subir, inhala al bajar.",err:"❌ No rotar la cadera. ❌ No doblar rodilla. ❌ Sin impulso.",hip:"⭐ Protege directamente la articulación de cadera",video:"https://www.youtube.com/watch?v=3Ow-96KqthE"},
+    {nombre:"Clamshell (Almeja)",icon:"🦀",ic:"ic-cadera",series:3,reps:"15 reps/lado",peso:"Sin peso",musculo:"Rotadores externos cadera",ejec:"Tumbado de lado, caderas y rodillas a 45°. Abre la rodilla de arriba manteniendo los pies juntos. Baja lento.",resp:"Exhala al abrir, inhala al cerrar.",err:"❌ No rotar la pelvis. ❌ No elevar el pie.",hip:"⭐ Esencial para coxartrosis bilateral",video:"https://www.youtube.com/watch?v=vQ0mEoK2fX4"},
+    {nombre:"Plancha Frontal",icon:"💪",ic:"ic-core",series:3,reps:"20-30 seg",peso:"Sin peso",musculo:"Core completo + Postura",ejec:"Antebrazos y punteras. Cuerpo recto. Activa abdomen empujando ombligo hacia la columna.",resp:"Respiración normal, no aguantes el aire.",err:"❌ No hundas la cadera. ❌ No eleves el trasero.",hip:"Mejora postura y estabilidad de cadera",video:"https://www.youtube.com/watch?v=B296mZDhrP4"},
+    {nombre:"Plancha Lateral",icon:"⬛",ic:"ic-core",series:2,reps:"20 seg/lado",peso:"Sin peso",musculo:"Oblicuos + Glúteo medio",ejec:"Apoya antebrazo y borde del pie. Sube la cadera formando línea recta.",resp:"Respiración normal y continua.",err:"❌ No dejes caer la cadera. ❌ No rotar el cuerpo.",hip:"Fortalece el estabilizador lateral de cadera",video:"https://www.youtube.com/watch?v=K0vlKkBpHaI"},
+    {nombre:"Sentadilla Parcial Kettlebell",icon:"🏋️",ic:"ic-cadera",series:3,reps:"12 reps",peso:"12 kg kettlebell",musculo:"Cuádriceps + Glúteo + Cadera",ejec:"Pies al ancho de hombros, kettlebell al pecho. Baja SOLO hasta 90°. Espalda recta, rodillas detrás de puntas.",resp:"Inhala al bajar, exhala al subir.",err:"❌ No bajes más de 90°. ❌ Rodillas no se juntan.",hip:"⚠️ Limitado a 90° por la coxartrosis",video:"https://www.youtube.com/watch?v=5gszJxuQOUs"}
+  ]},
+  {nombre:"DÍA B — Pecho + Espalda",ejercicios:[
+    {nombre:"Flexiones",icon:"💪",ic:"ic-pecho",series:4,reps:"10-15 reps",peso:"Peso corporal",musculo:"Pectoral + Tríceps + Hombro",ejec:"Manos al ancho de hombros. Baja el pecho casi al suelo. Sube explosivo. Variante en rodillas si necesitas.",resp:"Inhala al bajar, exhala al subir.",err:"❌ No hundas la cadera. ❌ No saques el trasero.",hip:"Sin impacto en cadera",video:"https://www.youtube.com/watch?v=_JzQ2nIiLbQ"},
+    {nombre:"Press Mancuernas en Suelo",icon:"🏋️",ic:"ic-pecho",series:3,reps:"12 reps",peso:"5 kg c/mano",musculo:"Pectoral completo",ejec:"Tumbado, rodillas flexionadas. Mancuernas al pecho, codos a 45°. Empuja arriba sin bloquear codos. Baja lento.",resp:"Inhala al bajar, exhala al empujar.",err:"❌ No abras codos a 90°. ❌ No arquees la espalda.",hip:"Tumbado, sin impacto",video:"https://www.youtube.com/watch?v=03dLUc23lw4"},
+    {nombre:"Remo Kettlebell",icon:"🚣",ic:"ic-espalda",series:3,reps:"12 reps/lado",peso:"12 kg kettlebell",musculo:"Dorsal + Romboides + Bíceps",ejec:"Apoya mano y rodilla contrarias en silla. Espalda paralela. Sube el kettlebell al costado del pecho apretando el omóplato.",resp:"Exhala al subir, inhala al bajar.",err:"❌ No rotes el tronco. ❌ No tires solo con el brazo.",hip:"Posición neutra, sin impacto",video:"https://www.youtube.com/watch?v=jo3NSkWutc4"},
+    {nombre:"Curl Bíceps Mancuernas",icon:"💪",ic:"ic-pecho",series:3,reps:"12 reps",peso:"5 kg c/mano",musculo:"Bíceps",ejec:"Brazos pegados al cuerpo. Sube rotando muñeca. Baja lento 3 segundos.",resp:"Exhala al subir, inhala al bajar.",err:"❌ No balancees el tronco. ❌ No bajes en caída libre.",hip:"Sin impacto",video:"https://www.youtube.com/watch?v=dV5HXQa5QrI"},
+    {nombre:"Extensión Tríceps Kettlebell",icon:"🔱",ic:"ic-pecho",series:3,reps:"12 reps",peso:"12 kg kettlebell",musculo:"Tríceps",ejec:"Sentado o de pie. Kettlebell sobre la cabeza. Baja detrás de la cabeza doblando codos. Sube extendiendo.",resp:"Inhala al bajar, exhala al subir.",err:"❌ No abras codos. ❌ No arquees la espalda.",hip:"Sin impacto",video:"https://www.youtube.com/watch?v=_gsUck-7M74"}
+  ]},
+  {nombre:"DÍA D — Bici + Postura",ejercicios:[
+    {nombre:"Calentamiento Bici — Suave",icon:"🚴",ic:"ic-cadera",series:1,reps:"10 minutos",peso:"Resistencia 1-3",musculo:"Cardio + Calentamiento articular",ejec:"Cadencia suave 60-70 rpm. Cuerpo relajado, espalda recta.",resp:"Respiración nasal tranquila.",err:"❌ No empieces fuerte. ❌ No te inclines demasiado.",hip:"⭐ Lubrica la articulación de cadera sin impacto",video:"https://www.youtube.com/watch?v=DZOkDod0GhQ"},
+    {nombre:"Clase Spinning YouTube",icon:"📱",ic:"ic-core",series:1,reps:"30-40 minutos",peso:"Resistencia 4-7",musculo:"Cardio + Piernas + Glúteos",ejec:"Sigue una clase en el iPad. Canal: JuanGomez MoodCycling. Ajusta resistencia según sensaciones.",resp:"Si no puedes hablar, baja la resistencia.",err:"❌ No subas resistencia alta las primeras semanas. ❌ Para si duele la cadera.",hip:"⭐ Sin impacto, máximo beneficio cardiovascular",video:"https://www.youtube.com/watch?v=-zJ7hHDrgW0"},
+    {nombre:"Chin Tucks — Postura Cervical",icon:"🧠",ic:"ic-espalda",series:3,reps:"15 reps",peso:"Sin peso",musculo:"Flexores cervicales profundos",ejec:"Mete la barbilla hacia dentro como haciendo papada. Movimiento horizontal. Mantén 3 seg.",resp:"Normal y continua.",err:"❌ No bajes la barbilla al pecho. ❌ No tenses los hombros.",hip:"Corrige postura en cadena: cabeza→lumbar→cadera",video:"https://www.youtube.com/watch?v=wQylqaCl8Zo"},
+    {nombre:"Apertura de Pecho",icon:"🦅",ic:"ic-espalda",series:3,reps:"10 reps lentas",peso:"Sin peso",musculo:"Pectoral menor + Deltoides anterior",ejec:"De pie, brazos en cruz. Lleva los brazos hacia atrás apretando los omóplatos. Mantén 2 seg.",resp:"Exhala al abrir el pecho, inhala al volver.",err:"❌ No arquees la lumbar. ❌ No subas hombros.",hip:"Mejora alineación que afecta postura lumbar y cadera",video:"https://www.youtube.com/watch?v=FeONKbqM63Q"},
+    {nombre:"Retroversión Pélvica",icon:"🦴",ic:"ic-cadera",series:3,reps:"15 reps",peso:"Sin peso",musculo:"Core + Glúteo — corrige hiperlordosis",ejec:"Tumbado, rodillas flexionadas. Aplana la espalda baja contra el suelo. Mantén 5 seg.",resp:"Exhala al aplanar, inhala al soltar.",err:"❌ No contengas la respiración. ❌ No muevas las piernas.",hip:"⭐ Clave para tu hiperlordosis — reduce carga directa en cadera",video:"https://www.youtube.com/watch?v=B296mZDhrP4"},
+    {nombre:"Estiramiento Final — Pectoral",icon:"🧘",ic:"ic-cadera",series:1,reps:"30 seg/lado",peso:"Sin peso",musculo:"Pectoral + Hombro anterior",ejec:"Apoya el antebrazo en el marco de una puerta. Gira el cuerpo hacia el lado contrario. Sin rebotar.",resp:"Respiración profunda y tranquila.",err:"❌ No fuerces el rango. ❌ No pongas el brazo por encima del hombro.",hip:"Cierra la sesión liberando tensión de la cadena anterior",video:"https://www.youtube.com/watch?v=YQmpO7GKZRg"}
+  ]}
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let pesoData=[],spinData=[],sesionesData=[],completados={},diaActual=0;
+
+function load(){
+  try{
+    pesoData=JSON.parse(localStorage.getItem('pf_peso')||'[]');
+    spinData=JSON.parse(localStorage.getItem('pf_spin')||'[]');
+    sesionesData=JSON.parse(localStorage.getItem('pf_sesiones')||'[]');
+    completados=JSON.parse(localStorage.getItem('pf_check')||'{}');
+  }catch(e){}
+}
+
+function save(){
+  try{
+    localStorage.setItem('pf_peso',JSON.stringify(pesoData));
+    localStorage.setItem('pf_spin',JSON.stringify(spinData));
+    localStorage.setItem('pf_sesiones',JSON.stringify(sesionesData));
+    localStorage.setItem('pf_check',JSON.stringify(completados));
+  }catch(e){}
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2300);
+}
+
+// ── PESO ──────────────────────────────────────────────────────────────────
+function registrarPeso(){
+  const v=parseFloat(document.getElementById('pesoInput').value);
+  if(!v||v<30||v>200)return;
+  pesoData.unshift({fecha:new Date().toLocaleDateString('es-ES'),valor:v});
+  document.getElementById('pesoInput').value='';
+  save();renderPeso();toast('Peso guardado ✓');
+}
+
+function borrarPeso(i){pesoData.splice(i,1);save();renderPeso();}
+
+function renderPeso(){
+  const c=document.getElementById('pesoHistory');
+  if(!pesoData.length){c.innerHTML='<div class="empty-state">Pésate en ayunas cada lunes.</div>';document.getElementById('statPeso').textContent='—';document.getElementById('statDiff').textContent='—';return;}
+  document.getElementById('statPeso').textContent=pesoData[0].valor;
+  const diff=(pesoData[0].valor-pesoData[pesoData.length-1].valor).toFixed(1);
+  const dEl=document.getElementById('statDiff');
+  dEl.textContent=(diff>0?'+':'')+diff;
+  dEl.style.color=diff<=0?'var(--green)':'var(--accent2)';
+  c.innerHTML=pesoData.map((e,i)=>{
+    const prev=pesoData[i+1];
+    let dh='';
+    if(prev){const d=(e.valor-prev.valor).toFixed(1);if(d<0)dh=`<span class="diff-pos">${d}kg↓</span>`;else if(d>0)dh=`<span class="diff-neg">+${d}kg↑</span>`;}
+    return `<div class="entry"><span class="fecha">${e.fecha}</span><span class="valor">${e.valor}kg</span>${dh}<button class="btn-sm" onclick="borrarPeso(${i})">✕</button></div>`;
+  }).join('');
+}
+
+// ── SPINNING ──────────────────────────────────────────────────────────────
+function registrarSpin(){
+  const min=parseInt(document.getElementById('spinMin').value);
+  const nota=document.getElementById('spinNota').value.trim();
+  if(!min||min<5)return;
+  spinData.unshift({fecha:new Date().toLocaleDateString('es-ES'),min,nota});
+  document.getElementById('spinMin').value='';
+  document.getElementById('spinNota').value='';
+  const hoy=new Date().toDateString();
+  if(!sesionesData.includes(hoy)){sesionesData.push(hoy);document.getElementById('statSesiones').textContent=sesionesData.length;}
+  save();renderSpin();renderSemana();toast('Sesión de spinning guardada ✓');
+}
+
+function borrarSpin(i){spinData.splice(i,1);save();renderSpin();}
+
+function renderSpin(){
+  const c=document.getElementById('spinHistory');
+  if(!spinData.length){c.innerHTML='<div class="empty-state">Sin sesiones aún.</div>';return;}
+  const tot=spinData.reduce((s,e)=>s+e.min,0);
+  c.innerHTML=`<div class="entry" style="background:rgba(232,255,71,.05);border:1px solid rgba(232,255,71,.1)"><span class="fecha">Total acumulado</span><span class="valor">${tot} min · ${(tot/60).toFixed(1)} h</span></div>`
+    +spinData.map((e,i)=>`<div class="entry"><span class="fecha">${e.fecha}</span><span class="valor">${e.min} min</span><span style="color:var(--muted);font-size:.75rem;flex:1;text-align:center;padding:0 6px">${e.nota||''}</span><button class="btn-sm" onclick="borrarSpin(${i})">✕</button></div>`).join('');
+}
+
+// ── EJERCICIOS ────────────────────────────────────────────────────────────
+function setDia(idx,btn){
+  diaActual=idx;
+  document.querySelectorAll('.dia-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderEj();
+}
+
+function renderEj(){
+  const c=document.getElementById('ejContainer');
+  c.innerHTML='';
+  DIAS[diaActual].ejercicios.forEach((ej,i)=>{
+    const key=`${diaActual}-${i}`,done=!!completados[key];
+    c.innerHTML+=`<div class="ej-card ${done?'done':''}" id="card-${i}">
+      <div class="ej-header" onclick="toggleDet(${i})">
+        <div class="ej-icon ${ej.ic}">${ej.icon}</div>
+        <div class="ej-info">
+          <div class="ej-nombre">${ej.nombre}</div>
+          <div class="ej-meta"><span class="tag t1">${ej.series}s</span><span class="tag t2">${ej.reps}</span><span class="tag t3">${ej.peso}</span></div>
+        </div>
+        <button class="check-btn ${done?'done':''}" onclick="toggleCheck(event,${i})">${done?'✓':''}</button>
+      </div>
+      <div class="ej-detail" id="det-${i}">
+        <div class="detail-grid">
+          <div class="di"><h4>💪 Músculo</h4><p>${ej.musculo}</p></div>
+          <div class="di"><h4>🫁 Respiración</h4><p>${ej.resp}</p></div>
+          <div class="di full"><h4>▶️ Ejecución</h4><p>${ej.ejec}</p></div>
+          <div class="di full"><div class="err-box"><strong>Errores a evitar:</strong><br>${ej.err}</div></div>
+          <div class="di full"><div class="hip-box"><strong>🦴 Tu cadera:</strong> ${ej.hip}</div></div>
+          ${ej.video?`<div class="full"><a class="video-btn" href="${ej.video}" target="_blank">▶️ Ver técnica en YouTube</a></div>`:''}
+        </div>
+      </div>
+    </div>`;
+  });
+  actualizarProgreso();
+}
+
+function toggleDet(i){document.getElementById(`det-${i}`).classList.toggle('open');}
+
+function toggleCheck(e,i){
+  e.stopPropagation();
+  const key=`${diaActual}-${i}`;
+  completados[key]=!completados[key];
+  save();renderEj();
+  const total=DIAS[diaActual].ejercicios.length;
+  const hechos=DIAS[diaActual].ejercicios.filter((_,j)=>completados[`${diaActual}-${j}`]).length;
+  if(hechos===total){const hoy=new Date().toDateString();if(!sesionesData.includes(hoy)){sesionesData.push(hoy);save();renderSemana();document.getElementById('statSesiones').textContent=sesionesData.length;toast('¡Sesión completada! 🎉');}}
+}
+
+function actualizarProgreso(){
+  const total=DIAS[diaActual].ejercicios.length;
+  const hechos=DIAS[diaActual].ejercicios.filter((_,i)=>completados[`${diaActual}-${i}`]).length;
+  document.getElementById('progresoFill').style.width=(total?hechos/total*100:0)+'%';
+  document.getElementById('progresoTxt').textContent=`${hechos} / ${total} ejercicios`;
+}
+
+function resetCompletados(){completados={};save();renderEj();toast('Marcas limpiadas');}
+
+// ── SEMANA ────────────────────────────────────────────────────────────────
+function renderSemana(){
+  const dias=['L','M','X','J','V','S','D'],hoy=new Date(),dow=hoy.getDay();
+  const lunes=new Date(hoy);lunes.setDate(hoy.getDate()-(dow===0?6:dow-1));
+  document.getElementById('semanaGrid').innerHTML=dias.map((d,i)=>{
+    const f=new Date(lunes);f.setDate(lunes.getDate()+i);
+    const esHoy=f.toDateString()===hoy.toDateString(),hecho=sesionesData.includes(f.toDateString());
+    return `<div class="dia-s ${hecho?'hecho':''} ${esHoy?'hoy':''}"><span>${hecho?'✓':d}</span><div>${f.getDate()}</div></div>`;
+  }).join('');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+load();
+renderPeso();renderSpin();renderEj();renderSemana();
+document.getElementById('statSesiones').textContent=sesionesData.length;
+document.getElementById('statSemana').textContent=Math.max(1,Math.ceil(sesionesData.length/3));
+</script>
+</body>
+</html>
